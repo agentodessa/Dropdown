@@ -1,36 +1,34 @@
 'use strict';
 
 var gulp = require('gulp'),
-	gutil = require('gulp-util'),
-	concat = require('gulp-concat'),
-	changed = require('gulp-changed'),
+	tracer = require('gulp-tracer'),
 	connect = require('gulp-connect'),
-	clean = require('del'),
+	clean = require('gulp-clean'),
 	bower = require('gulp-bower'),
-	jshint = require('gulp-jshint'),
-	jsdoc = require("gulp-jsdoc"),
-	template = require('gulp-template'),
 	runSequence = require('run-sequence'),
-
-	dir = require('require-dir')('./gulp-tasks');
-
+	changed = require('gulp-changed'),
+	componentDir = "bower_components/",
+	rootDir = 'public/',
+	vendorDir = 'vendor/',
+	srcDir = "src/",
+	distDir = "dist/";
 
 gulp.task('default', function () {
 	runSequence('bower', 'dev');
 });
-
+gulp.task('bower', ['default'], function () {
+	return bower();
+});
 gulp.task('build', function () {
 	runSequence('bower', 'prod');
 });
 gulp.task('dev', ['clean'], function () {
-	gulp.start('scripts.app:dev', 'scripts.vendor', 'styles', 'themes',
-			'templates.direct', 'server', 'watch', 'fonts', 'images', 'config', 'locales');
+	gulp.start('scripts:vendor', 'scripts', 'styles', 'server');
 });
 
 gulp.task('prod', ['clean'], function () {
-	gulp.start('scripts.app', 'scripts.vendor', 'styles', 'themes',
-			'templates.direct', 'fonts', 'images', 'config', 'locales', 'test');
-	gutil.log('tasks is completed');
+	gulp.start('scripts:prod', 'styles:prod');
+	tracer.log('tasks is completed');
 });
 
 
@@ -40,4 +38,70 @@ gulp.task('server', function () {
 		port: 9090,
 		livereload: true
 	});
+});
+
+gulp.task('styles:prod', function () {
+	var source = [
+		'dropdown.css'
+	].map(function (dir) {
+		return srcDir + dir;
+	});
+
+	return gulp.src(source)
+		.pipe(gulp.dest(distDir))
+		.pipe(connect.reload());
+});
+gulp.task('scripts:prod', function () {
+	var source = [
+		'dropdown.js'
+	].map(function (dir) {
+		return srcDir + dir;
+	});
+
+	return gulp.src(source)
+		.pipe(gulp.dest(distDir))
+		.pipe(connect.reload());
+});
+gulp.task('styles', function () {
+	var source = [
+		'dropdown.css'
+	].map(function (dir) {
+		return srcDir + dir;
+	});
+
+	return gulp.src(source)
+		.pipe(gulp.dest(rootDir + vendorDir))
+		.pipe(connect.reload());
+});
+gulp.task('scripts', function () {
+	var source = [
+		'**/**.js'
+	].map(function (dir) {
+		return srcDir + dir;
+	});
+
+	return gulp.src(source)
+		.pipe(gulp.dest(rootDir + vendorDir))
+		.pipe(connect.reload());
+});
+gulp.task('scripts:vendor', function () {
+	var source = [
+		'jquery/dist/jquery.js'
+	].map(function (dir) {
+		return componentDir + dir;
+	});
+
+	return gulp.src(source)
+		.pipe(gulp.dest(rootDir + vendorDir))
+		.pipe(connect.reload());
+});
+
+gulp.task('watch', ['clean'], function () {
+	gulp.watch(srcDir + '*.css', ['styles']);
+	gulp.watch(srcDir + '*.js', ['scripts']);
+});
+
+gulp.task('clean', function () {
+	return gulp.src(rootDir + vendorDir, {read: false})
+		.pipe(clean());
 });
