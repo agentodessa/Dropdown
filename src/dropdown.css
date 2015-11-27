@@ -1,0 +1,4 @@
+.select.active.dropdown, .select.active.dropdown .menu {
+	border-color: #96C8DA;
+	box-shadow: 0 2px 3px 0 rgba(34, 36, 38, .15);
+}

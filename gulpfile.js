@@ -3,6 +3,7 @@
 var gulp = require('gulp'),
 	tracer = require('gulp-tracer'),
 	connect = require('gulp-connect'),
+
 	clean = require('gulp-clean'),
 	bower = require('gulp-bower'),
 	runSequence = require('run-sequence'),
@@ -23,7 +24,7 @@ gulp.task('build', function () {
 	runSequence('bower', 'prod');
 });
 gulp.task('dev', ['clean'], function () {
-	gulp.start('scripts:vendor', 'scripts', 'styles', 'server');
+	gulp.start('scripts:vendor', 'scripts', 'styles', 'server','watch');
 });
 
 gulp.task('prod', ['clean'], function () {
@@ -97,8 +98,8 @@ gulp.task('scripts:vendor', function () {
 });
 
 gulp.task('watch', ['clean'], function () {
-	gulp.watch(srcDir + '*.css', ['styles']);
-	gulp.watch(srcDir + '*.js', ['scripts']);
+	gulp.watch(srcDir + '**/*.css', ['styles']);
+	gulp.watch(srcDir + '**/*.js', ['scripts']);
 });
 
 gulp.task('clean', function () {
