@@ -22,8 +22,8 @@
 		console.log(select);
 
 		module = {
-			init: function () {
-
+			init: function (options) {
+				settings.templates.dropdown(options);
 			},
 			destroy: function () {
 
@@ -53,24 +53,24 @@
 		};
 
 		$.fn.dropdown.settings.templates = {
-			dropdown: function (select) {
+			dropdown: function (options) {
 				console.log(select)
 				var values = select.values || {},
-					html = ''
-					;
+						html = ''
+						;
 				html += '<i class="dropdown icon"></i>';
 				html += '<div class="text"></div>';
 				html += '<div class="menu">';
-				$.each(select.values, function (index, option) {
+				$.each(options, function (index, option) {
 					html += (option.disabled)
-						? '<div class="disabled item" data-value="' + option.value + '">' + option.name + '</div>'
-						: '<div class="item" data-value="' + option.value + '">' + option.name + '</div>'
+							? '<div class="disabled item" data-value="' + option.value + '">' + option.name + '</div>'
+							: '<div class="item" data-value="' + option.value + '">' + option.name + '</div>'
 					;
 				});
 				html += '</div>';
 				return html;
 			}
-		}
+		};
 		module.init();
 	};
 
@@ -86,6 +86,4 @@
 	//		context[name] = definition();
 	//	}
 	//})
-})
-
-(jQuery);
+})(jQuery);
